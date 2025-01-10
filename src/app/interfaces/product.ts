@@ -11,7 +11,7 @@ export class DefaultProduct implements Product {
     id: number = 0;
     name: string = 'Default Name';
     description?: string = 'Default Description';
-    price: number = 0;
+    price: GLfloat = 0;
     isFavorite?: boolean = false;
 
     constructor(init?: Partial<DefaultProduct>) {

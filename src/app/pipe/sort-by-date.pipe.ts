@@ -1,10 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Product } from './product';
+import { Product } from '../interfaces/product';
 
 @Pipe({
-  name: 'sortByDate'
+  name: 'sortByDate',
 })
-export class SortByDate implements PipeTransform {
+export class SortByDatePipe implements PipeTransform {
   transform(products: Product[], asc: boolean = true): Product[] {
     return products.sort((a, b) => {
       const dateA = a.releaseDate ? a.releaseDate.getTime() : 0;

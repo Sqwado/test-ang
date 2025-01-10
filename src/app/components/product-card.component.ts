@@ -1,6 +1,7 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Product } from '../product';
+import { Product } from '../interfaces/product';
+import { ProductService } from '../services/product.service';
 
 @Component({
   selector: 'app-product-card',
@@ -84,6 +85,7 @@ export class ProductCardComponent {
 
   @Input() product: Product | Product = { id: 0, name: 'Default Name', description: 'Default Description' };
   @Output() productAdded = new EventEmitter();
+  productService = inject(ProductService);
 
   addToCart() {
     // Logic to add the product to the cart
@@ -92,7 +94,7 @@ export class ProductCardComponent {
   }
 
   toggleFavorite() {
-    this.product.isFavorite = !this.product.isFavorite;
-    console.log(`${this.product.name} favorite status: ${this.product.isFavorite}`);
+    this.productService.toggleFavorite(this.product);
   }
+
 }
