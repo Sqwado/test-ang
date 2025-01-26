@@ -18,6 +18,22 @@ import { FormsModule } from '@angular/forms';
       </select>
     </div>
   `,
+  styles: [`
+    .filter-dropdown {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    select {
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+  `],
   standalone: true
 })
 export class FilterDropdownComponent {
@@ -29,8 +45,8 @@ export class FilterDropdownComponent {
     { value: 'date-reverse', label: 'Date (Reverse)' },
     { value: 'name', label: 'Name' },
     { value: 'name-reverse', label: 'Name (Reverse)' },
-    {value: 'price', label: 'Price'},
-    {value: 'price-reverse', label: 'Price (Reverse)'}
+    { value: 'price', label: 'Price' },
+    { value: 'price-reverse', label: 'Price (Reverse)' }
   ] as const;
 
   onFilterChange(value: string) {

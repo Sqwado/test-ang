@@ -1,19 +1,12 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FilterDropdownComponent } from './filter-dropdown.component';
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, FilterDropdownComponent],
+  imports: [CommonModule],
   template: `
     <div class="header">
       <h1>Welcome to {{ title }}!</h1>
-      <div class="options">
-        <app-filter-dropdown 
-          [currentFilter]="currentFilter" 
-          (filterChange)="onFilterChange($event)">
-        </app-filter-dropdown>
-      </div>
     </div>
   `,
   styles: [`
@@ -21,21 +14,18 @@ import { FilterDropdownComponent } from './filter-dropdown.component';
       display: flex;
       flex-direction: column;
       gap: 1rem;
+      padding: 1rem;
     }
 
-    .options {
-      display: flex;
-      gap: 1rem;
+    h1 {
+      margin: 0;
+      padding: 0;
+      font-size: 2rem;
+      text-align: center;
     }
-
+    
   `]
 })
 export class AppHeaderComponent {
   @Input() title: string = 'Default Title';
-  @Input() currentFilter: string = '';
-  @Output() filterChange = new EventEmitter<string>();
-
-  onFilterChange(newFilter: string) {
-    this.filterChange.emit(newFilter);
-  }
 }
