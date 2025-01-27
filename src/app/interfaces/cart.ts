@@ -1,6 +1,5 @@
 import { CartLine } from './cart-line';
 
-
 export interface Cart {
     lines: CartLine[];
     itemCount: number;

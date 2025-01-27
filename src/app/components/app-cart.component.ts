@@ -1,6 +1,5 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Product } from '../interfaces/product';
 import { CartService } from '../services/cart.service';
 
 @Component({
@@ -15,7 +14,7 @@ import { CartService } from '../services/cart.service';
       <p>Items in cart: {{ cartService.getCartItemsCount() }}</p>
       <p>Total price: {{ cartService.getTotalPrice() | currency: 'EUR' }}</p>
       <ul>
-        <ng-container *ngFor="let p of cartService.cart.lines; trackBy: trackByCartItemId">
+        <ng-container *ngFor="let p of cartService.cart.lines; trackBy: cartService.trackByCartLineId">
           <li (click)="cartService.removeProduct(p.product)" style="cursor: pointer">{{ p.product.name }} - x{{ p.quantity }}</li>
         </ng-container>
       </ul>
@@ -69,16 +68,9 @@ import { CartService } from '../services/cart.service';
       li {
         margin: 0.5rem 0;
       }
-
     }
-
   `]
 })
 export class AppCartComponent {
-
   cartService = inject(CartService);
-
-  trackByCartItemId(index: number, item: { product: Product; quantity: number }) {
-    return item.product.id;
-  }
 }

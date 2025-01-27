@@ -1,16 +1,17 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Product } from '../interfaces/product';
 import { ProductCardComponent } from './product-card.component';
 import { SortProductsPipe } from '../pipe/sort-products.pipe';
 import { SearchProductsPipe } from '../pipe/search-products.pipe';
+import { ProductService } from '../services/product.service';
+import { FilterService } from '../services/filter.service';
 
 @Component({
   selector: 'app-product-list',
   imports: [CommonModule, ProductCardComponent, SortProductsPipe, SearchProductsPipe],
   template: `
     <div class="product-container">
-      <ng-container *ngFor="let p of (products | searchProducts: searchQuery | sortProducts: currentFilter)">
+      <ng-container *ngFor="let p of (productService.getProducts() | searchProducts: filterService.getSearchQuery() | sortProducts: filterService.getFilter())">
         <app-product-card 
           [product]="p" 
           class="product-card" />
@@ -26,7 +27,6 @@ import { SearchProductsPipe } from '../pipe/search-products.pipe';
   `]
 })
 export class ProductListComponent {
-  @Input() products: Product[] = [];
-  @Input() currentFilter: string = '';
-  @Input() searchQuery: string = '';
+  productService = inject(ProductService);
+  filterService = inject(FilterService);
 }

@@ -4,6 +4,7 @@ import { Product } from '../interfaces/product';
 @Injectable({
   providedIn: 'root'
 })
+
 export class ProductService {
 
   products: Product[] = [
@@ -31,5 +32,4 @@ export class ProductService {
     product.isFavorite = !product.isFavorite;
     console.log(`${product.name} favorite status: ${product.isFavorite}`);
   }
-
 }

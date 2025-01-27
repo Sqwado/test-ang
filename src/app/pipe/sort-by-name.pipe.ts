@@ -4,6 +4,7 @@ import { Product } from '../interfaces/product';
 @Pipe({
   name: 'sortByName',
 })
+
 export class SortByNamePipe implements PipeTransform {
   transform(products: Product[], asc: boolean = true): Product[] {
     return products.sort((a, b) => {

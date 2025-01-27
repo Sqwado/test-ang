@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Product } from '../interfaces/product';
 import { ProductService } from '../services/product.service';
@@ -17,8 +17,8 @@ import { CartService } from '../services/cart.service';
     <p *ngIf="product.price">Price: {{product.price | currency:'EUR'}}</p>
     <p *ngIf="product.releaseDate">Release date: {{product.releaseDate | date:'fullDate':'':'fr'}}</p>
     <div class="button-container">
-      <button (click)="addToCart()">Add to Cart</button>
-      <button (click)="toggleFavorite()" [class.filled]="product.isFavorite" class="favorite">
+      <button (click)="cartService.addProduct(product)">Add to Cart</button>
+      <button (click)="productService.toggleFavorite(product)" [class.filled]="product.isFavorite" class="favorite">
         <span *ngIf="product.isFavorite">&#x2764;</span>
         <span *ngIf="!product.isFavorite">&#x2661;</span>
       </button>
@@ -87,14 +87,4 @@ export class ProductCardComponent {
   productService = inject(ProductService);
 
   cartService = inject(CartService);
-
-  addToCart() {
-    console.log(`${this.product.name} added to cart`);
-    this.cartService.addProduct(this.product);
-  }
-
-  toggleFavorite() {
-    this.productService.toggleFavorite(this.product);
-  }
-
 }

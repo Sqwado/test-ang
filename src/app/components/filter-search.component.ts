@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { FilterService } from '../services/filter.service';
 
 @Component({
   selector: 'app-filter-search',
@@ -11,8 +12,7 @@ import { FormsModule } from '@angular/forms';
       <input 
         id="search" 
         type="text" 
-        [(ngModel)]="searchQuery" 
-        (ngModelChange)="onSearchChange($event)" 
+        [(ngModel)]="filterService.searchQuery"
         placeholder="Search...">
     </div>
   `,
@@ -35,10 +35,5 @@ import { FormsModule } from '@angular/forms';
   standalone: true
 })
 export class FilterSearchComponent {
-  @Input() searchQuery: string = ''; // Valeur par défaut
-  @Output() searchChange = new EventEmitter<string>();
-
-  onSearchChange(value: string) {
-    this.searchChange.emit(value);
-  }
+  filterService = inject(FilterService);
 }

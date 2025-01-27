@@ -1,7 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Product } from './interfaces/product';
-import { ProductService } from './services/product.service';
 import { ProductListComponent } from './components/app-product-list.component';
 import { AppHeaderComponent } from './components/app-header.component';
 import { AppFooterComponent } from './components/app-footer.component';
@@ -18,17 +16,8 @@ import { AppCartComponent } from './components/app-cart.component';
       </app-header>
       <div class="content">
         <div class="left">
-        <app-filter
-          [currentFilter]="filter"
-          (filterChange)="handleFilterChange($event)"
-          [searchQuery]="searchQuery"
-          (searchChange)="handleSearchChange($event)">
-        </app-filter>
-          <app-product-list
-            [products]="products" 
-            [currentFilter]="filter"
-            [searchQuery]="searchQuery">
-          </app-product-list>
+        <app-filter/>
+        <app-product-list/>
         </div>
         <div class="right">
           <app-cart/>
@@ -86,20 +75,4 @@ import { AppCartComponent } from './components/app-cart.component';
 })
 export class AppComponent {
   title = 'NVIDIA reseller';
-  filter: string = 'date-reverse'; // Valeur initiale du filtre
-  searchQuery: string = ''; // Valeur initiale de la recherche
-
-  productService = inject(ProductService);
-
-  products = this.productService.getProducts();
-
-  handleFilterChange(newFilter: string) {
-    this.filter = newFilter;
-    console.log('Filter changed to:', this.filter);
-  }
-
-  handleSearchChange(newSearch: string) {
-    this.searchQuery = newSearch;
-    console.log('Search changed to:', this.searchQuery);
-  }
 }

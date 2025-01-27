@@ -3,7 +3,6 @@ import { Cart } from '../interfaces/cart';
 import { Product } from '../interfaces/product';
 import { CartLine } from '../interfaces/cart-line';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -55,5 +54,4 @@ export class CartService {
   trackByCartLineId(index: number, line: CartLine): number {
     return line.product.id;
   }
-
 }

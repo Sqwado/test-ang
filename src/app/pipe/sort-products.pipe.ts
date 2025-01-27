@@ -7,6 +7,7 @@ import { SortByPricePipe } from './sort-by-price.pipe';
 @Pipe({
   name: 'sortProducts'
 })
+
 export class SortProductsPipe implements PipeTransform {
 
   transform(products: Product[], filter: string): Product[] {
