@@ -13,7 +13,6 @@ import { SearchProductsPipe } from '../pipe/search-products.pipe';
       <ng-container *ngFor="let p of (products | searchProducts: searchQuery | sortProducts: currentFilter)">
         <app-product-card 
           [product]="p" 
-          (productAdded)="onAddToCart($event)"
           class="product-card" />
       </ng-container>
     </div>
@@ -30,9 +29,4 @@ export class ProductListComponent {
   @Input() products: Product[] = [];
   @Input() currentFilter: string = '';
   @Input() searchQuery: string = '';
-  @Output() productAdded = new EventEmitter<Product>();
-
-  onAddToCart(product: Product) {
-    this.productAdded.emit(product);
-  }
 }

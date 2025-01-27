@@ -13,6 +13,7 @@ export class DefaultProduct implements Product {
     description?: string = 'Default Description';
     price: GLfloat = 0;
     isFavorite?: boolean = false;
+    releaseDate?: Date = new Date();
 
     constructor(init?: Partial<DefaultProduct>) {
         Object.assign(this, init);

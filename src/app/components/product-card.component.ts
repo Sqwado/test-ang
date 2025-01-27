@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Product } from '../interfaces/product';
 import { ProductService } from '../services/product.service';
+import { CartService } from '../services/cart.service';
 
 @Component({
   selector: 'app-product-card',
@@ -83,13 +84,13 @@ import { ProductService } from '../services/product.service';
 export class ProductCardComponent {
 
   @Input() product: Product | Product = { id: 0, name: 'Default Name', description: 'Default Description' };
-  @Output() productAdded = new EventEmitter();
   productService = inject(ProductService);
 
+  cartService = inject(CartService);
+
   addToCart() {
-    // Logic to add the product to the cart
     console.log(`${this.product.name} added to cart`);
-    this.productAdded.emit(this.product);
+    this.cartService.addProduct(this.product);
   }
 
   toggleFavorite() {

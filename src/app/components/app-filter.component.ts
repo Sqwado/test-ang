@@ -26,6 +26,7 @@ import { FilterSearchComponent } from './filter-search.component';
       justify-content: space-between; 
       align-items: center;
       gap: 1rem;
+      padding: 1rem;
     }
 
     @media (max-width: 600px) {

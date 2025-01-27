@@ -27,12 +27,11 @@ import { AppCartComponent } from './components/app-cart.component';
           <app-product-list
             [products]="products" 
             [currentFilter]="filter"
-            [searchQuery]="searchQuery"
-            (productAdded)="addToCart($event)">
+            [searchQuery]="searchQuery">
           </app-product-list>
         </div>
         <div class="right">
-          <app-cart [cart]="cart"></app-cart>
+          <app-cart/>
         </div>
       </div>
       <app-footer/>
@@ -61,14 +60,27 @@ import { AppCartComponent } from './components/app-cart.component';
     }
 
     .left {
-      width: calc(100% - 150px - 2rem);
+      width: calc(100% - 200px);
     }
 
     .right {
-      width: 150px;
+      width: 200px;
       height: fit-content;
-      padding: 1rem;
     }
+
+    @media (max-width: 600px) {      
+      .content {
+        flex-direction: column;
+      }
+      .left {
+        width: 100%;
+      }
+      .right {
+        width: 100%;
+        margin-top: 1rem;
+      }
+    }
+
     `,
   ],
 })
@@ -80,33 +92,6 @@ export class AppComponent {
   productService = inject(ProductService);
 
   products = this.productService.getProducts();
-
-  cart: { product: Product; quantity: number }[] = [];
-
-  addToCart(product: Product) {
-    const cartItem = this.cart.find((item) => item.product.id === product.id);
-    if (cartItem) {
-      cartItem.quantity++;
-    } else {
-      this.cart.push({ product, quantity: 1 });
-    }
-    console.log('Adding to cart', product);
-  }
-
-  getTotalPrice() {
-    return this.cart.reduce(
-      (acc, item) => acc + (item.product.price || 0) * item.quantity,
-      0
-    );
-  }
-
-  getCartItemsCount() {
-    return this.cart.reduce((acc, item) => acc + item.quantity, 0);
-  }
-
-  trackByCartItemId(index: number, item: { product: Product; quantity: number }) {
-    return item.product.id;
-  }
 
   handleFilterChange(newFilter: string) {
     this.filter = newFilter;
