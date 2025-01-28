@@ -9,27 +9,36 @@ import { CartLine } from '../interfaces/cart-line';
 export class CartService {
   cart: Cart = { lines: [], itemCount: 0, cartPrice: 0 };
 
-  addProduct(product: Product): void {
+  addProduct(product: Product, quantity = 1): void {
     const line = this.cart.lines.find(l => l.product.id === product.id);
     if (line) {
-      line.quantity++;
-      line.lineTotal += product.price ?? 0;
+      line.quantity += quantity;
+      line.lineTotal += (product.price ?? 0) * quantity;
     } else {
-      this.cart.lines.push({ product, quantity: 1, lineTotal: product.price ?? 0 });
+      this.cart.lines.push({ product, quantity: quantity, lineTotal: (product.price ?? 0) * quantity });
     }
+
+    // Update the cart price
+    this.cart.cartPrice = this.getTotalPrice();
+
+    // Show success toast
   }
 
-  removeProduct(product: Product): void {
+  removeProduct(product: Product, quantity = 1): void {
     const index = this.cart.lines.findIndex(l => l.product.id === product.id);
     if (index !== -1) {
       const line = this.cart.lines[index];
-      line.quantity--;
-      line.lineTotal -= product.price ?? 0;
-      if (line.quantity === 0) {
+      line.quantity -= quantity;
+      line.lineTotal -= (product.price ?? 0) * quantity;
+      if (line.quantity <= 0) {
         this.cart.lines.splice(index, 1);
       }
     }
+
+    // Update the cart price
+    this.cart.cartPrice = this.getTotalPrice();
   }
+
 
   clearCart(): void {
     this.cart.lines = [];

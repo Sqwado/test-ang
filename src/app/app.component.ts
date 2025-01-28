@@ -1,27 +1,17 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductListComponent } from './components/app-product-list.component';
 import { AppHeaderComponent } from './components/app-header.component';
 import { AppFooterComponent } from './components/app-footer.component';
-import { AppFilterComponent } from './components/app-filter.component';
-import { AppCartComponent } from './components/app-cart.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, ProductListComponent, AppHeaderComponent, AppFooterComponent, AppCartComponent, AppFilterComponent],
+  imports: [CommonModule, AppHeaderComponent, AppFooterComponent, RouterModule],
   template: `
     <div class="main">
-      <app-header 
-        [title]="title">
-      </app-header>
+      <app-header [title]="title"/>
       <div class="content">
-        <div class="left">
-        <app-filter/>
-        <app-product-list/>
-        </div>
-        <div class="right">
-          <app-cart/>
-        </div>
+        <router-outlet></router-outlet>
       </div>
       <app-footer/>
     </div>
@@ -44,7 +34,7 @@ import { AppCartComponent } from './components/app-cart.component';
 
     .content {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       flex-grow: 1;
     }
 
@@ -57,10 +47,7 @@ import { AppCartComponent } from './components/app-cart.component';
       height: fit-content;
     }
 
-    @media (max-width: 600px) {      
-      .content {
-        flex-direction: column;
-      }
+    @media (max-width: 600px) {
       .left {
         width: 100%;
       }

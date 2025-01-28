@@ -1,44 +1,64 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../services/cart.service';
+import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { faTrashAlt, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-cart',
-  imports: [CommonModule],
+  imports: [CommonModule, FontAwesomeModule],
   template: `
     <div class="cart">
       <div class="cart-header">
-        <h2>Cart</h2>
-        <button (click)="cartService.clearCart()">Clear cart</button>
+        <h2>Shopping Cart</h2>
+        <button (click)="cartService.clearCart()">
+          <fa-icon [icon]="['fas', 'trash-alt']"></fa-icon> Clear cart
+        </button>
       </div>
-      <p>Items in cart: {{ cartService.getCartItemsCount() }}</p>
-      <p>Total price: {{ cartService.getTotalPrice() | currency: 'EUR' }}</p>
-      <ul>
-        <ng-container *ngFor="let p of cartService.cart.lines; trackBy: cartService.trackByCartLineId">
-          <li (click)="cartService.removeProduct(p.product)" style="cursor: pointer">{{ p.product.name }} - x{{ p.quantity }}</li>
-        </ng-container>
-      </ul>
+      <div class="cart-body">
+        <div class="cart-items">
+          <ng-container *ngFor="let p of cartService.cart.lines; trackBy: cartService.trackByCartLineId">
+            <div class="cart-item">
+              <div class="item-details">
+                <span class="item-name">{{ p.product.name }}</span>
+                <span class="item-quantity">x{{ p.quantity }}</span>
+                <span class="item-price">{{ p.product.price | currency: 'EUR' }}</span>
+              </div>
+              <button (click)="cartService.removeProduct(p.product)" class="remove-item">
+                <fa-icon [icon]="['fas', 'minus-circle']"></fa-icon>
+              </button>
+            </div>
+          </ng-container>
+        </div>
+        <div class="cart-summary">
+          <p>Items in cart: {{ cartService.getCartItemsCount() }}</p>
+          <p>Total price: {{ cartService.getTotalPrice() | currency: 'EUR' }}</p>
+        </div>
+      </div>
     </div>
   `,
   styles: [`
     .cart {
-      padding: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      margin: 1rem 0;
+      padding: 1.5rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      width: calc(100% - 2rem);
     }
 
     .cart-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 2rem;
-      width: 100%;
+      margin-bottom: 1rem;
     }
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    li {
-      margin: 0.5rem 0;
+
+    h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: #333;
     }
 
     button {
@@ -48,29 +68,106 @@ import { CartService } from '../services/cart.service';
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      transition: background-color 0.3s ease;
+      display: flex;
+      align-items: center;
+    }
+
+    button fa-icon {
+      margin-right: 0.5rem;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .cart-body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cart-items {
+      margin-bottom: 1rem;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      background-color: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+
+    .item-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .item-name {
+      font-size: 1rem;
+      color: #333;
+    }
+
+    .item-quantity, .item-price {
+      font-size: 0.875rem;
+      color: #555;
+    }
+
+    .remove-item {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #d9534f;
+    }
+
+    .remove-item fa-icon {
+      margin-right: 0;
+    }
+
+    .remove-item:hover {
+      color: #c9302c;
+    }
+
+    .cart-summary {
+      margin-top: 1rem;
+      font-size: 1rem;
+      color: #555;
     }
 
     @media (max-width: 600px) {
+      .cart {
+        padding: 1rem;
+      }
+
       .cart-header {
         flex-direction: column;
         align-items: flex-start;
-       width:fit-content;
       }
 
       button {
         margin-top: 1rem;
+        width: 100%;
       }
 
-      ul {
-        padding: 0 1rem;
+      .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
       }
 
-      li {
-        margin: 0.5rem 0;
+      .cart-summary {
+        margin-top: 1rem;
       }
     }
   `]
 })
 export class AppCartComponent {
   cartService = inject(CartService);
+
+  constructor(library: FaIconLibrary) {
+    library.addIcons(faTrashAlt, faMinusCircle);
+  }
 }
