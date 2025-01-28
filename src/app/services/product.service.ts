@@ -34,7 +34,12 @@ export class ProductService {
     });
   }
 
-  getProducts(): Product[] {
+
+
+  getProducts(onlyFavorites: boolean = false): Product[] {
+    if (onlyFavorites) {
+      return this.products.filter(product => product.isFavorite);
+    }
     return this.products;
   }
 

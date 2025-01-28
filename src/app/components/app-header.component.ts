@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { routesInfo } from '../app.routes';
 
 @Component({
   selector: 'app-header',
@@ -10,17 +11,8 @@ import { RouterModule } from '@angular/router';
       <h1>Welcome to {{ title }}!</h1>
       <nav class="nav-bar">
         <ul>
-          <li>
-            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
-          </li>
-          <li>
-            <a routerLink="/products" routerLinkActive="active">Products</a>
-          </li>
-          <li>
-            <a routerLink="/cart" routerLinkActive="active">Cart</a>
-          </li>
-          <li>
-            <a routerLink="/about" routerLinkActive="active">About</a>
+          <li *ngFor="let route of routes">
+            <a *ngIf="route.showInNav" [routerLink]="route.route.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: route.exact }">{{ route.route.title }}</a>
           </li>
         </ul>
       </nav>
@@ -70,4 +62,5 @@ import { RouterModule } from '@angular/router';
 })
 export class AppHeaderComponent {
   @Input() title: string = 'Default Title';
+  routes = routesInfo;
 }

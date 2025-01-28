@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductCardComponent } from './product-card.component';
 import { SortProductsPipe } from '../pipe/sort-products.pipe';
@@ -11,7 +11,7 @@ import { FilterService } from '../services/filter.service';
   imports: [CommonModule, ProductCardComponent, SortProductsPipe, SearchProductsPipe],
   template: `
     <div class="product-container">
-      <ng-container *ngFor="let p of (productService.getProducts() | searchProducts: filterService.getSearchQuery() | sortProducts: filterService.getFilter())">
+      <ng-container *ngFor="let p of (productService.getProducts( onlyFavorites ) | searchProducts: filterService.getSearchQuery() | sortProducts: filterService.getFilter())">
         <app-product-card 
           [product]="p" 
           class="product-card" />
@@ -27,6 +27,7 @@ import { FilterService } from '../services/filter.service';
   `]
 })
 export class ProductListComponent {
+  @Input() onlyFavorites = false;
   productService = inject(ProductService);
   filterService = inject(FilterService);
 }
