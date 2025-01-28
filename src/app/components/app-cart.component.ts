@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { CartService } from '../services/cart.service';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faTrashAlt, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
+import { AppCartLineComponent } from './app-cart-line.component';
 
 @Component({
   selector: 'app-cart',
-  imports: [CommonModule, FontAwesomeModule],
+  imports: [CommonModule, FontAwesomeModule, AppCartLineComponent],
   template: `
     <div class="cart">
       <div class="cart-header">
@@ -18,16 +19,7 @@ import { faTrashAlt, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
       <div class="cart-body">
         <div class="cart-items">
           <ng-container *ngFor="let p of cartService.cart.lines; trackBy: cartService.trackByCartLineId">
-            <div class="cart-item">
-              <div class="item-details">
-                <span class="item-name">{{ p.product.name }}</span>
-                <span class="item-quantity">x{{ p.quantity }}</span>
-                <span class="item-price">{{ p.product.price | currency: 'EUR' }}</span>
-              </div>
-              <button (click)="cartService.removeProduct(p.product)" class="remove-item">
-                <fa-icon [icon]="['fas', 'minus-circle']"></fa-icon>
-              </button>
-            </div>
+            <app-cart-line [p]="p"></app-cart-line>
           </ng-container>
         </div>
         <div class="cart-summary">

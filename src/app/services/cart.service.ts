@@ -1,13 +1,40 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Cart } from '../interfaces/cart';
 import { Product } from '../interfaces/product';
 import { CartLine } from '../interfaces/cart-line';
+import { LocalStorageService } from './localStorage.service';
+import { ProductService } from './product.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
   cart: Cart = { lines: [], itemCount: 0, cartPrice: 0 };
+
+  localStorageService = inject(LocalStorageService);
+  productService = inject(ProductService);
+
+  constructor(private toastr: ToastrService) {
+    this.loadCartFromLocalStorage();
+  }
+
+  private loadCartFromLocalStorage(): void {
+    const storedCartItems = this.localStorageService.getCart();
+    this.cart.lines = storedCartItems.map(item => {
+      const product = this.productService.getProduct(parseInt(item.id, 10));
+      return {
+        product: product as Product,
+        quantity: item.quantity,
+        lineTotal: 0 // This will be recalculated
+      };
+    });
+    this.cart.lines.forEach(line => {
+      line.lineTotal = this.getLineTotal(line);
+    });
+    this.cart.cartPrice = this.getTotalPrice();
+    this.cart.itemCount = this.getCartItemsCount();
+  }
 
   addProduct(product: Product, quantity = 1): void {
     const line = this.cart.lines.find(l => l.product.id === product.id);
@@ -18,10 +45,14 @@ export class CartService {
       this.cart.lines.push({ product, quantity: quantity, lineTotal: (product.price ?? 0) * quantity });
     }
 
+    this.localStorageService.addToCart(product.id.toString(), quantity);
+
     // Update the cart price
     this.cart.cartPrice = this.getTotalPrice();
+    this.cart.itemCount = this.getCartItemsCount();
 
     // Show success toast
+    this.toastr.success(`${product.name} added to cart!`, 'Success');
   }
 
   removeProduct(product: Product, quantity = 1): void {
@@ -35,13 +66,17 @@ export class CartService {
       }
     }
 
+    this.localStorageService.removeFromCart(product.id.toString(), quantity);
+
     // Update the cart price
     this.cart.cartPrice = this.getTotalPrice();
+    this.cart.itemCount = this.getCartItemsCount();
   }
-
 
   clearCart(): void {
     this.cart.lines = [];
+
+    this.localStorageService.clearCart();
   }
 
   getCartLines(): CartLine[] {
@@ -60,7 +95,7 @@ export class CartService {
     return (line.product.price ?? 0) * line.quantity;
   }
 
-  trackByCartLineId(index: number, line: CartLine): number {
+  trackByCartLineId(_: number, line: CartLine): number {
     return line.product.id;
   }
 }

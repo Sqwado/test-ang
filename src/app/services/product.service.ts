@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Product } from '../interfaces/product';
+import { LocalStorageService } from './localStorage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,19 @@ export class ProductService {
     { id: 10, name: 'RTX 4060', description: 'Entry-level GPU for gaming', price: 279.99, releaseDate: new Date('2022-12-01') },
   ];
 
+  localStorageService = inject(LocalStorageService);
+
+  constructor() {
+    this.loadProductsFromLocalStorage();
+  }
+
+  private loadProductsFromLocalStorage(): void {
+    const storedProducts = this.localStorageService.getFavorites();
+    this.products.forEach(product => {
+      product.isFavorite = storedProducts.includes(product.id.toString());
+    });
+  }
+
   getProducts(): Product[] {
     return this.products;
   }
@@ -30,6 +44,11 @@ export class ProductService {
 
   toggleFavorite(product: Product): void {
     product.isFavorite = !product.isFavorite;
-    console.log(`${product.name} favorite status: ${product.isFavorite}`);
+    if (product.isFavorite) {
+      this.localStorageService.addFavorite(product.id.toString());
+    } else {
+      this.localStorageService.removeFavorite(product.id.toString());
+    }
+
   }
 }
