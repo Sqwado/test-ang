@@ -4,6 +4,7 @@ import { CartPage } from './pages/cart.page';
 import { DetailsPage } from './pages/details.page';
 import { ProductsFavoritesPage } from './pages/products-favorites.page';
 import { CartButtonComponent } from './components/cart-button.component';
+import { OrderSummaryPage } from './pages/order-summary.page';
 
 interface RouteInfo {
     route: Route;
@@ -59,6 +60,15 @@ export const routesInfo: RouteInfo[] = [
             path: 'products/:id',
             title: 'Details',
             component: DetailsPage
+        },
+        exact: true,
+        showInNav: false
+    },
+    {
+        route: {
+            path: 'orer-summary/:id',
+            title: 'Order Summary',
+            component: OrderSummaryPage
         },
         exact: true,
         showInNav: false

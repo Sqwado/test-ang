@@ -12,6 +12,7 @@ export class LocalStorageService {
 
     private readonly cartKey = 'shoppingCart';
     private readonly favoritesKey = 'favoriteItems';
+    private readonly ordersKey = 'orders';
 
     setItem(key: string, value: any): void {
         localStorage.setItem(key, JSON.stringify(value));
@@ -80,5 +81,20 @@ export class LocalStorageService {
 
     clearFavorites(): void {
         this.removeItem(this.favoritesKey);
+    }
+
+    // Order methods
+    addOrder(order: any): void {
+        const orders = this.getOrders();
+        orders.push(order);
+        this.setItem(this.ordersKey, orders);
+    }
+
+    getOrders(): any[] {
+        return this.getItem(this.ordersKey) || [];
+    }
+
+    clearOrders(): void {
+        this.removeItem(this.ordersKey);
     }
 }

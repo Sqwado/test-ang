@@ -1,35 +1,100 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
+import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../services/cart.service';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faTrashAlt, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
 import { AppCartLineComponent } from './app-cart-line.component';
+import { OrderModalComponent } from './app-order-modal.component';
 
 @Component({
+  imports: [CommonModule, FontAwesomeModule, AppCartLineComponent, ReactiveFormsModule, OrderModalComponent],
   selector: 'app-cart',
-  imports: [CommonModule, FontAwesomeModule, AppCartLineComponent],
   template: `
-    <div class="cart">
-      <div class="cart-header">
-        <h2>Shopping Cart</h2>
-        <button (click)="cartService.clearCart()">
-          <fa-icon [icon]="['fas', 'trash-alt']"></fa-icon> Clear cart
-        </button>
-      </div>
-      <div class="cart-body">
-        <div class="cart-items">
-          <ng-container *ngFor="let p of cartService.cart.lines; trackBy: cartService.trackByCartLineId">
-            <app-cart-line [p]="p"></app-cart-line>
-          </ng-container>
-        </div>
-      </div>
-      <div class="cart-summary">
-        <p>Items in cart: {{ cartService.getCartItemsCount() }}</p>
-        <p>Total price: {{ cartService.getTotalPrice() | currency: 'EUR' }}</p>
+  <div class="cart">
+    <div class="cart-header">
+      <h2>Shopping Cart</h2>
+      <button (click)="cartService.clearCart()">
+        <fa-icon [icon]="['fas', 'trash-alt']"></fa-icon> Clear cart
+      </button>
+    </div>
+    <div class="cart-body">
+      <div class="cart-items">
+        <ng-container *ngFor="let p of cartService.cart.lines; trackBy: cartService.trackByCartLineId">
+          <app-cart-line [p]="p"></app-cart-line>
+        </ng-container>
       </div>
     </div>
-  `,
+    <div class="cart-summary">
+      <div class="cart-left">
+      <p>Items in cart: {{ cartService.getCartItemsCount() }}</p>
+      <p>Total price: {{ cartService.getTotalPrice() | currency: 'EUR' }}</p>
+      </div>
+      <button (click)="openOrderModal()">
+        <fa-icon [icon]="['fas', 'minus-circle']"></fa-icon> Order Now
+      </button>
+    </div>
+
+    <!-- Order Modal Component -->
+    <app-order-modal
+      #orderModal
+      (close)="closeOrderModal()"
+      (confirm)="confirmOrder()"
+    ></app-order-modal>
+  </div>
+`,
   styles: [`
+    /* Styles pour la modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none; /* Modal cachée par défaut */
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal.show {
+      display: flex; /* Affiche la modal lorsqu'elle a la classe 'show' */
+    }
+
+    .modal-content {
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 500px;
+    }
+
+    .modal-header,
+    .modal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h4 {
+      margin: 0;
+    }
+
+    .modal-footer button {
+      padding: 0.5rem 1rem;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .modal-footer button:hover {
+      background-color: #0056b3;
+    }
+
 
     :host {
       display: flex;
@@ -112,6 +177,8 @@ import { AppCartLineComponent } from './app-cart-line.component';
       border: 1px solid #e0e0e0;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
       text-align: center;
+      display: flex;
+      justify-content: space-between;
 
       position: sticky; /* Rend la section sticky */
       bottom: 0; /* Collée au bas de l'écran */
@@ -128,6 +195,13 @@ import { AppCartLineComponent } from './app-cart-line.component';
         font-weight: bold;
         font-size: 1.4rem;
         color: #007bff;
+    }
+
+    .cart-left {
+        display: flex;
+        align-items: start;
+        flex-direction: column;
+        gap: 0.5rem;
     }
 
     /* Full Responsiveness */
@@ -212,12 +286,27 @@ import { AppCartLineComponent } from './app-cart-line.component';
             font-size: 0.9rem;
         }
     }
-`]
+  `]
 })
 export class AppCartComponent {
+  @ViewChild('orderModal') orderModal!: OrderModalComponent;
   cartService = inject(CartService);
 
   constructor(library: FaIconLibrary) {
     library.addIcons(faTrashAlt, faMinusCircle);
+  }
+
+  openOrderModal() {
+    this.orderModal.open();  // Open the modal using the method in OrderModalComponent
+  }
+
+  closeOrderModal() {
+    this.orderModal.closeModal();  // Close the modal
+  }
+
+  confirmOrder() {
+    // Handle the order confirmation logic
+    console.log('Order confirmed');
+    this.closeOrderModal();
   }
 }
