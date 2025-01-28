@@ -1,12 +1,14 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { OrderService } from '../services/order.service';
+import { Router } from '@angular/router';
 
 @Component({
-    selector: 'app-order-modal',
-    imports: [CommonModule, ReactiveFormsModule],
-    template: `
+  selector: 'app-order-modal',
+  imports: [CommonModule, ReactiveFormsModule],
+  template: `
     <div class="modal" [ngClass]="{'show': isOpen}" (click)="onBackdropClick($event)">
       <div class="modal-content" (click)="onModalContentClick($event)">
         <div class="modal-header">
@@ -40,7 +42,7 @@ import { CommonModule } from '@angular/common';
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     .modal {
         position: fixed;
         top: 0;
@@ -154,48 +156,56 @@ import { CommonModule } from '@angular/common';
   `]
 })
 export class OrderModalComponent {
-    @Output() close = new EventEmitter<void>();
-    @Output() confirm = new EventEmitter<void>();
+  @Output() close = new EventEmitter<void>();
+  @Output() confirm = new EventEmitter<void>();
 
-    orderForm: FormGroup;
-    isOpen: boolean = false;
+  orderForm: FormGroup;
+  isOpen: boolean = false;
+  orderService = inject(OrderService);
+  router = inject(Router);
 
-    constructor() {
-        this.orderForm = new FormGroup({
-            name: new FormControl('', Validators.required), // Name is required
-            address: new FormControl('', [Validators.required, this.addressValidator]) // Address is required and custom validator
-        });
+  constructor() {
+    this.orderForm = new FormGroup({
+      name: new FormControl('', Validators.required), // Name is required
+      address: new FormControl('', [Validators.required, this.addressValidator]) // Address is required and custom validator
+    });
+  }
+
+  // Custom validator for address (for example, it should contain at least 5 characters)
+  addressValidator(control: AbstractControl) {
+    if (control.value && control.value.length < 5) {
+      return { 'addressInvalid': true };
     }
+    return null;
+  }
 
-    // Custom validator for address (for example, it should contain at least 5 characters)
-    addressValidator(control: AbstractControl) {
-        if (control.value && control.value.length < 5) {
-            return { 'addressInvalid': true };
-        }
-        return null;
-    }
+  open() {
+    this.isOpen = true;
+  }
 
-    open() {
-        this.isOpen = true;
-    }
+  closeModal() {
+    this.isOpen = false;
+  }
 
-    closeModal() {
-        this.isOpen = false;
+  onBackdropClick(event: MouseEvent) {
+    if (event.target === event.currentTarget) {
+      this.closeModal();
     }
+  }
 
-    onBackdropClick(event: MouseEvent) {
-        if (event.target === event.currentTarget) {
-            this.closeModal();
-        }
-    }
+  onModalContentClick(event: MouseEvent) {
+    event.stopPropagation();
+  }
 
-    onModalContentClick(event: MouseEvent) {
-        event.stopPropagation();
-    }
+  confirmOrder() {
+    if (this.orderForm.valid) {
+      this.confirm.emit();
+      const id = this.orderService.placeOrder(this.orderForm.value.name, this.orderForm.value.address);
+      this.orderForm.reset();
 
-    confirmOrder() {
-        if (this.orderForm.valid) {
-            this.confirm.emit();
-        }
+      // redirect to order summary page
+      this.router.navigate(['/order-summary', id]);
+
     }
+  }
 }

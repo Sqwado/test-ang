@@ -1,21 +1,19 @@
-import { Product } from './product';
+import { Cart, DefaultCart } from './cart';
 
 export interface Order {
     id: number;
     name: string;
     address: string;
-    items: Product[];
-    itemCount: number;
-    totalPrice: number;
+    date?: Date;
+    cart: Cart;
 }
 
 export class DefaultOrder implements Order {
     id: number = 0;
     name: string = '';
     address: string = '';
-    items: Product[] = [];
-    itemCount: number = 0;
-    totalPrice: number = 0;
+    date: Date = new Date();
+    cart: Cart = new DefaultCart();
 
     constructor(init?: Partial<DefaultOrder>) {
         Object.assign(this, init);

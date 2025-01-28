@@ -6,6 +6,7 @@ import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontaweso
 import { faTrashAlt, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
 import { AppCartLineComponent } from './app-cart-line.component';
 import { OrderModalComponent } from './app-order-modal.component';
+import { OrderService } from '../services/order.service';
 
 @Component({
   imports: [CommonModule, FontAwesomeModule, AppCartLineComponent, ReactiveFormsModule, OrderModalComponent],
@@ -14,7 +15,7 @@ import { OrderModalComponent } from './app-order-modal.component';
   <div class="cart">
     <div class="cart-header">
       <h2>Shopping Cart</h2>
-      <button (click)="cartService.clearCart()">
+      <button (click)="cartService.clearCart()" [disabled]="cartService.getCartItemsCount() === 0">
         <fa-icon [icon]="['fas', 'trash-alt']"></fa-icon> Clear cart
       </button>
     </div>
@@ -30,7 +31,7 @@ import { OrderModalComponent } from './app-order-modal.component';
       <p>Items in cart: {{ cartService.getCartItemsCount() }}</p>
       <p>Total price: {{ cartService.getTotalPrice() | currency: 'EUR' }}</p>
       </div>
-      <button (click)="openOrderModal()">
+      <button (click)="openOrderModal()" [disabled]="cartService.getCartItemsCount() === 0">
         <fa-icon [icon]="['fas', 'minus-circle']"></fa-icon> Order Now
       </button>
     </div>
@@ -154,6 +155,11 @@ import { OrderModalComponent } from './app-order-modal.component';
     button:hover {
         background-color: #0056b3;
         transform: scale(1.05);
+    }
+
+    button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
     }
 
     .cart-body {
@@ -305,8 +311,6 @@ export class AppCartComponent {
   }
 
   confirmOrder() {
-    // Handle the order confirmation logic
-    console.log('Order confirmed');
     this.closeOrderModal();
   }
 }

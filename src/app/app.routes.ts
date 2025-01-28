@@ -4,6 +4,7 @@ import { CartPage } from './pages/cart.page';
 import { DetailsPage } from './pages/details.page';
 import { ProductsFavoritesPage } from './pages/products-favorites.page';
 import { CartButtonComponent } from './components/cart-button.component';
+import { OrderListComponent } from './pages/orders.page';
 import { OrderSummaryPage } from './pages/order-summary.page';
 import { LandingPage } from './pages/landing.page';
 
@@ -67,7 +68,16 @@ export const routesInfo: RouteInfo[] = [
     },
     {
         route: {
-            path: 'orer-summary/:id',
+            path: 'order-summary',
+            title: 'Order Summary',
+            component: OrderListComponent
+        },
+        exact: false,
+        showInNav: true
+    },
+    {
+        route: {
+            path: 'order-summary/:id',
             title: 'Order Summary',
             component: OrderSummaryPage
         },
