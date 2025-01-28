@@ -4,22 +4,23 @@ import { Router } from '@angular/router';
 import { Product } from '../interfaces/product';
 import { ProductService } from '../services/product.service';
 import { CartService } from '../services/cart.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-product-card',
-  imports: [CommonModule],
+  imports: [CommonModule],  
   template: `
   <div class="details-container" (click)="redirectToProduct(product.id)">
     <div class="header">
       <h2>{{product.name}}</h2>
       <button (click)="toggleFavorite($event)" [class.filled]="product.isFavorite" class="favorite">
-                <span *ngIf="product.isFavorite">&#x2764;</span>
+                <span *ngIf="product.isFavorite">&#x2665;</span>
                 <span *ngIf="!product.isFavorite">&#x2661;</span>
             </button>
     </div>
     <p class="description">{{product.description}}</p>
     <p *ngIf="product.price" class="price">Price: {{product.price | currency:'EUR'}}</p>
-    <p *ngIf="product.releaseDate" class="release-date">Release date: {{product.releaseDate | date:'fullDate':'':'fr'}}</p>
+    <p *ngIf="product.releaseDate" class="release-date">Release date: {{product.releaseDate | date:'shortDate':'':'fr'}}</p>
     <div class="button-container">
       <button (click)="addToCart($event)" class="add-to-cart">Add to Cart</button>
     </div>
@@ -91,7 +92,7 @@ import { CartService } from '../services/cart.service';
   }
 
   button:hover {
-    background-color: #0056b3;
+    background-color: #007bff;
   }
 
   .back-button {
@@ -180,6 +181,7 @@ export class ProductCardComponent {
   productService = inject(ProductService);
   cartService = inject(CartService);
   router = inject(Router);
+  toastr = inject(ToastrService);
 
   redirectToProduct(productId: number) {
     this.router.navigate(['/products', productId]);
@@ -192,6 +194,11 @@ export class ProductCardComponent {
 
   toggleFavorite(event: Event) {
     event.stopPropagation();
+    const favToast = this.product.isFavorite ? 'Removed from favorites!' : 'Added to favorites!';
     this.productService.toggleFavorite(this.product);
+    this.toastr.success(favToast, 'Success', {
+      toastClass: 'ngx-toastr favorite-toast',
+      positionClass: 'toast-bottom-right',
+    });
   }
 }

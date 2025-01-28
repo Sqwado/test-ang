@@ -5,6 +5,7 @@ import { DetailsPage } from './pages/details.page';
 import { ProductsFavoritesPage } from './pages/products-favorites.page';
 import { CartButtonComponent } from './components/cart-button.component';
 import { OrderSummaryPage } from './pages/order-summary.page';
+import { LandingPage } from './pages/landing.page';
 
 interface RouteInfo {
     route: Route;
@@ -19,7 +20,7 @@ export const routesInfo: RouteInfo[] = [
         route: {
             path: '',
             title: 'Home',
-            component: ProductsPage
+            component: LandingPage
         },
         exact: true,
         showInNav: true,
