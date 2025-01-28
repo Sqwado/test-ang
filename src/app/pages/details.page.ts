@@ -13,40 +13,41 @@ import { CartService } from '../services/cart.service';
     standalone: true,
     template: `
     <div class="details-page">
-        <button class="back-button" (click)="goBack()">
-            <fa-icon [icon]="['fas', 'arrow-left']"></fa-icon> Retour
-        </button>
-        <div class="details-container" *ngIf="product">
-            <div class="header">
-                <h1>{{ product.name }}</h1>
-                <button (click)="toggleFavorite()" [class.filled]="product.isFavorite" class="favorite">
-                    <span *ngIf="product.isFavorite">&#x2764;</span>
-                    <span *ngIf="!product.isFavorite">&#x2661;</span>
-                </button>
-            </div>
-            <p class="description">{{ product.description }}</p>
-            <p class="price">Price: {{ product.price | currency:'EUR' }}</p>
-            <p class="release-date">Release Date: {{ product.releaseDate | date:'fullDate':'':'fr' }}</p>
-            
-            <!-- Quantity adjustment -->
-            <div class="quantity-container">
-                <button (click)="decreaseQuantity()" class="quantity-button">
-                    <fa-icon [icon]="['fas', 'minus']"></fa-icon>
-                </button>
-                <input [(ngModel)]="quantity" [min]="1" type="number" class="quantity-input" />
-                <button (click)="increaseQuantity()" class="quantity-button">
-                    <fa-icon [icon]="['fas', 'plus']"></fa-icon>
-                </button>
-            </div>
-
-            <div class="button-container">
-                <button (click)="addToCart()" class="add-to-cart">Add to Cart</button>
-            </div>
+    <button class="back-button" (click)="goBack()" aria-label="Retour à la page précédente">
+        <fa-icon [icon]="['fas', 'arrow-left']"></fa-icon> Retour
+    </button>
+    <div class="details-container" *ngIf="product">
+        <div class="header">
+            <h1>{{ product.name }}</h1>
+            <button (click)="toggleFavorite()" [class.filled]="product.isFavorite" class="favorite" aria-label="Ajouter aux favoris">
+                <span *ngIf="product.isFavorite">&#x2764;</span>
+                <span *ngIf="!product.isFavorite">&#x2661;</span>
+            </button>
         </div>
-        <div *ngIf="!product" class="not-found">
-            <p>Product not found.</p>
+        <p class="description">{{ product.description }}</p>
+        <p class="price">Price: {{ product.price | currency:'EUR' }}</p>
+        <p class="release-date">Release Date: {{ product.releaseDate | date:'fullDate':'':'fr' }}</p>
+        
+        <!-- Quantity adjustment -->
+        <div class="quantity-container">
+            <button (click)="decreaseQuantity()" class="quantity-button" aria-label="Diminuer la quantité">
+                <fa-icon [icon]="['fas', 'minus']"></fa-icon>
+            </button>
+            <input [(ngModel)]="quantity" [min]="1" type="number" class="quantity-input" aria-label="Quantité" />
+            <button (click)="increaseQuantity()" class="quantity-button" aria-label="Augmenter la quantité">
+                <fa-icon [icon]="['fas', 'plus']"></fa-icon>
+            </button>
+        </div>
+
+        <div class="button-container">
+            <button (click)="addToCart()" class="add-to-cart" aria-label="Ajouter au panier">Ajouter au panier</button>
         </div>
     </div>
+    <div *ngIf="!product" class="not-found">
+        <p>Product not found</p>
+    </div>
+</div>
+
   `,
     styles: [
         `
@@ -215,13 +216,14 @@ import { CartService } from '../services/cart.service';
             color: #666;
         }
 
+        /* Responsive */
         @media (max-width: 768px) {
             .details-container {
                 padding: 20px;
             }
 
             h1 {
-                font-size: 24px;
+                font-size: 28px;
             }
 
             .description {
@@ -236,6 +238,20 @@ import { CartService } from '../services/cart.service';
                 font-size: 14px;
             }
 
+            .quantity-container {
+                gap: 8px;
+            }
+
+            .quantity-button {
+                font-size: 18px;
+                padding: 6px 12px;
+            }
+
+            .quantity-input {
+                width: 50px;
+                font-size: 16px;
+            }
+
             .button-container {
                 flex-direction: column;
                 align-items: stretch;
@@ -248,6 +264,56 @@ import { CartService } from '../services/cart.service';
 
             .favorite {
                 font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .details-container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .description {
+                font-size: 14px;
+            }
+
+            .price {
+                font-size: 18px;
+            }
+
+            .release-date {
+                font-size: 12px;
+            }
+
+            .quantity-container {
+                gap: 6px;
+            }
+
+            .quantity-button {
+                font-size: 16px;
+                padding: 4px 8px;
+            }
+
+            .quantity-input {
+                width: 45px;
+                font-size: 14px;
+            }
+
+            .button-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .favorite {
+                font-size: 20px;
             }
         }
         `,

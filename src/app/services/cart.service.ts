@@ -55,7 +55,9 @@ export class CartService {
 
     // Show success toast
     const message = quantity > 1 ? `${quantity} ${product.name} added to cart!` : `${product.name} added to cart!`;
-    this.toastr.success(message, 'Success').onTap.subscribe(() => {
+    this.toastr.success(message, 'Success', {
+      positionClass: 'toast-bottom-right'
+    }).onTap.subscribe(() => {
       this.router.navigate(['/cart']);
     });
   }
@@ -76,6 +78,24 @@ export class CartService {
     // Update the cart price
     this.cart.cartPrice = this.getTotalPrice();
     this.cart.itemCount = this.getCartItemsCount();
+
+    // Show success toast with trash icon
+    const message = quantity > 1
+      ? `${quantity} ${product.name} removed from cart!`
+      : `${product.name} removed from cart!`;
+
+    // Toast avec une icône de poubelle
+    this.toastr.success(
+      `<i class="fa fa-trash" style="color: red; margin-right: 8px;"></i> ${message}`,
+      'Success',
+      {
+        enableHtml: true,
+        positionClass: 'toast-bottom-right'
+      }
+    ).onTap.subscribe(() => {
+      // Redirection vers le panier au clic sur le toast
+      this.router.navigate(['/cart']);
+    });
   }
 
   clearCart(): void {

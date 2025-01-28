@@ -7,10 +7,8 @@ import { AppFilterComponent } from '../components/app-filter.component';
     imports: [ProductListComponent, AppFilterComponent],
     standalone: true,
     template: `
-    <div>
-        <app-filter/>
-        <app-product-list/>
-    </div>
+    <app-filter/>
+    <app-product-list/>
   `,
     styles: [
         `

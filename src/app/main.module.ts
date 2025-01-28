@@ -8,8 +8,12 @@ import { ToastrModule } from 'ngx-toastr';
   declarations: [],
   imports: [
     CommonModule,
-    BrowserAnimationsModule,
-    ToastrModule.forRoot()
+    BrowserAnimationsModule, // Obligatoire pour ngx-toastr
+    ToastrModule.forRoot({
+      timeOut: 3000, // Temps d'affichage
+      positionClass: 'toast-bottom-right', // Position du toast
+      preventDuplicates: true, // Evite les doublons
+    }),
   ]
 })
 export class MainModule { }

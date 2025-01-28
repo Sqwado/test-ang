@@ -3,11 +3,14 @@ import { ProductsPage } from './pages/products.page';
 import { CartPage } from './pages/cart.page';
 import { DetailsPage } from './pages/details.page';
 import { ProductsFavoritesPage } from './pages/products-favorites.page';
+import { CartButtonComponent } from './components/cart-button.component';
 
 interface RouteInfo {
     route: Route;
     exact: boolean;
     showInNav: boolean;
+    iconClass?: string;
+    specilaComponent?: any;
 }
 
 export const routesInfo: RouteInfo[] = [
@@ -18,7 +21,8 @@ export const routesInfo: RouteInfo[] = [
             component: ProductsPage
         },
         exact: true,
-        showInNav: true
+        showInNav: true,
+        iconClass: 'fa fa-home'
     },
     {
         route: {
@@ -27,7 +31,7 @@ export const routesInfo: RouteInfo[] = [
             component: ProductsPage
         },
         exact: false,
-        showInNav: true
+        showInNav: true,
     },
     {
         route: {
@@ -36,7 +40,8 @@ export const routesInfo: RouteInfo[] = [
             component: ProductsFavoritesPage
         },
         exact: true,
-        showInNav: true
+        showInNav: true,
+        iconClass: 'fa fa-heart'
     },
     {
         route: {
@@ -45,7 +50,9 @@ export const routesInfo: RouteInfo[] = [
             component: CartPage
         },
         exact: true,
-        showInNav: true
+        showInNav: false,
+        iconClass: 'fa fa-shopping-cart',
+        specilaComponent: CartButtonComponent,
     },
     {
         route: {
