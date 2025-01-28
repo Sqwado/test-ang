@@ -6,7 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { faArrowLeft, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 import { ProductService } from '../services/product.service';
-import { CartService } from '../services/cart.service';
+import { CartService } from '../services/cart.service';``
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     imports: [FontAwesomeModule, CommonModule, FormsModule],
@@ -19,8 +20,8 @@ import { CartService } from '../services/cart.service';
     <div class="details-container" *ngIf="product">
         <div class="header">
             <h1>{{ product.name }}</h1>
-            <button (click)="toggleFavorite()" [class.filled]="product.isFavorite" class="favorite" aria-label="Ajouter aux favoris">
-                <span *ngIf="product.isFavorite">&#x2764;</span>
+            <button (click)="toggleFavorite($event)" [class.filled]="product.isFavorite" class="favorite">
+                <span *ngIf="product.isFavorite">&#x2665;</span>
                 <span *ngIf="!product.isFavorite">&#x2661;</span>
             </button>
         </div>
@@ -326,6 +327,7 @@ export class DetailsPage implements OnInit {
     id: number | null = null;
     location = inject(Location);
     faIconLibrary = inject(FaIconLibrary);
+    toastr = inject(ToastrService);
 
     product: any;
     quantity: number = 1;
@@ -352,11 +354,15 @@ export class DetailsPage implements OnInit {
         }
     }
 
-    toggleFavorite() {
-        if (this.product) {
-            this.productService.toggleFavorite(this.product);
-        }
-    }
+    toggleFavorite(event: Event) {
+        event.stopPropagation();
+        const favToast = this.product.isFavorite ? 'Removed from favorites!' : 'Added to favorites!';
+        this.productService.toggleFavorite(this.product);
+        this.toastr.success(favToast, 'Success', {
+          toastClass: 'ngx-toastr favorite-toast',
+          positionClass: 'toast-bottom-right',
+        });
+      }
 
     increaseQuantity() {
         this.quantity++;
