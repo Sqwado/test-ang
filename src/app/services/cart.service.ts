@@ -5,12 +5,14 @@ import { CartLine } from '../interfaces/cart-line';
 import { LocalStorageService } from './localStorage.service';
 import { ProductService } from './product.service';
 import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
   cart: Cart = { lines: [], itemCount: 0, cartPrice: 0 };
+  router = inject(Router);
 
   localStorageService = inject(LocalStorageService);
   productService = inject(ProductService);
@@ -52,7 +54,10 @@ export class CartService {
     this.cart.itemCount = this.getCartItemsCount();
 
     // Show success toast
-    this.toastr.success(`${product.name} added to cart!`, 'Success');
+    const message = quantity > 1 ? `${quantity} ${product.name} added to cart!` : `${product.name} added to cart!`;
+    this.toastr.success(message, 'Success').onTap.subscribe(() => {
+      this.router.navigate(['/cart']);
+    });
   }
 
   removeProduct(product: Product, quantity = 1): void {
