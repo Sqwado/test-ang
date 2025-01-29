@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { faArrowLeft, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 import { ProductService } from '../services/product.service';
-import { CartService } from '../services/cart.service';``
+import { CartService } from '../services/cart.service'; ``
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -18,6 +18,9 @@ import { ToastrService } from 'ngx-toastr';
         <fa-icon [icon]="['fas', 'arrow-left']"></fa-icon> Retour
     </button>
     <div class="details-container" *ngIf="product">
+        <div class="product-image-container">
+            <img [src]="product.imageUrl" [alt]="product.name" class="product-image">
+        </div>
         <div class="header">
             <h1>{{ product.name }}</h1>
             <button (click)="toggleFavorite($event)" [class.filled]="product.isFavorite" class="favorite">
@@ -67,9 +70,8 @@ import { ToastrService } from 'ngx-toastr';
         }
 
         .back-button {
-            position: absolute;
-            top: 16px;
-            left: 16px;
+            width: calc(100% - 16px);
+            margin: 8px;
             background-color: #007bff;
             color: white;
             border: none;
@@ -88,10 +90,9 @@ import { ToastrService } from 'ngx-toastr';
         }
 
         .details-container {
-            margin: 80px auto 0;
-            max-width: 800px;
-            width: 100%;
-            padding: 32px;
+            width: calc(100% - 64px);
+            padding: 16px;
+            margin: 0 auto;
             background-color: #ffffff;
             border-radius: 16px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
@@ -104,12 +105,14 @@ import { ToastrService } from 'ngx-toastr';
             margin-bottom: 24px;
             border-bottom: 2px solid #eee;
             padding-bottom: 12px;
+            gap: 16px;
         }
 
         h1 {
             margin: 0;
             font-size: 32px;
             color: #222;
+            white-space: nowrap;
         }
 
         .description {
@@ -220,7 +223,8 @@ import { ToastrService } from 'ngx-toastr';
         /* Responsive */
         @media (max-width: 768px) {
             .details-container {
-                padding: 20px;
+                padding: 10px;
+                width: calc(100% - 20px);
             }
 
             h1 {
@@ -270,7 +274,8 @@ import { ToastrService } from 'ngx-toastr';
 
         @media (max-width: 480px) {
             .details-container {
-                padding: 15px;
+                padding: 5px;
+                width: calc(100% - 10px);
             }
 
             h1 {
@@ -359,10 +364,10 @@ export class DetailsPage implements OnInit {
         const favToast = this.product.isFavorite ? 'Removed from favorites!' : 'Added to favorites!';
         this.productService.toggleFavorite(this.product);
         this.toastr.success(favToast, 'Success', {
-          toastClass: 'ngx-toastr favorite-toast',
-          positionClass: 'toast-bottom-right',
+            toastClass: 'ngx-toastr favorite-toast',
+            positionClass: 'toast-bottom-right',
         });
-      }
+    }
 
     increaseQuantity() {
         this.quantity++;

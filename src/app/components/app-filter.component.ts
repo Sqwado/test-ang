@@ -15,7 +15,13 @@ import { FilterSearchComponent } from './filter-search.component';
     </div>
   `,
   styles: [`
+    :host {
+      display: flex;
+      justify-content: center;
+    }
+
     .options {
+      width: fit-content;
       display: flex;
       justify-content: space-between; 
       align-items: center;
@@ -26,7 +32,8 @@ import { FilterSearchComponent } from './filter-search.component';
     @media (max-width: 600px) {
       .options {
         flex-direction: column;
-        align-items: stretch;
+        padding-left: 0.2rem;
+        padding-right: 0;
       }
     }
 

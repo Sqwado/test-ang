@@ -19,10 +19,15 @@ import { FilterService } from '../services/filter.service';
     </div>
   `,
   styles: [`
+    :host {
+      width: fit-content;
+    } 
+
     .filter-dropdown {
       display: flex;
       align-items: center;
       gap: 1rem;
+      width: auto;
     }
 
     label {

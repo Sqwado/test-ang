@@ -32,7 +32,7 @@ import { ToastrService } from 'ngx-toastr';
   styles: `
   :host {
     display: block;
-    padding: 16px;
+    padding-top: 20px;
     box-sizing: border-box;
   }
 
@@ -143,7 +143,7 @@ import { ToastrService } from 'ngx-toastr';
 
   @media (max-width: 600px) {
     .details-container {
-      padding: 16px;
+      padding: 8px;
       font-size: 14px;
     }
 

@@ -35,6 +35,7 @@ export const routesInfo: RouteInfo[] = [
         },
         exact: false,
         showInNav: true,
+        iconClass: 'fa fa-shopping-bag'
     },
     {
         route: {
@@ -73,7 +74,8 @@ export const routesInfo: RouteInfo[] = [
             component: OrderListComponent
         },
         exact: false,
-        showInNav: true
+        showInNav: true,
+        iconClass: 'fa fa-list'
     },
     {
         route: {

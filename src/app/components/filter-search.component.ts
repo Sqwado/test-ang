@@ -17,6 +17,10 @@ import { FilterService } from '../services/filter.service';
     </div>
   `,
   styles: [`
+    :host {
+      width: fit-content;
+    }
+
     .filter-search {
       display: flex;
       align-items: center;
@@ -30,6 +34,16 @@ import { FilterService } from '../services/filter.service';
     input {
       padding: 0.5rem;
       font-size: 1rem;
+      min-width: 200px;
+      width: 100%;
+    }
+
+    @media (max-width: 600px) {
+      .filter-search {
+        gap: 0.5rem;
+        flex-direction: column;
+
+      }
     }
   `],
   standalone: true

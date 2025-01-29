@@ -12,7 +12,7 @@ import { routesInfo } from '../app.routes';
         <ng-container *ngFor="let route of routes">
             <ng-container *ngIf="route.showInNav && !route.specilaComponent; else specialComponent">
               <a [routerLink]="route.route.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: route.exact }">
-                <i *ngIf="route.iconClass" class="icon" [ngClass]="route.iconClass"></i> {{ route.route.title }}
+                <i *ngIf="route.iconClass" class="icon" [ngClass]="route.iconClass"></i> <span class="nav-text">{{ route.route.title }}</span>
               </a>
             </ng-container>
             <ng-template #specialComponent>
@@ -30,7 +30,8 @@ import { routesInfo } from '../app.routes';
         display: flex;
         justify-content: space-around;
         align-items: center;
-        padding: 1rem;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
         background-color: #333;
         color: #fff;
       }
