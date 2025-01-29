@@ -19,18 +19,42 @@ body {
     background-color: red;
 }
 
-p.description{
+p.description {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-h1{
+h1 {
     text-align: center;
     margin: auto;
 }
 
-.options{
+.options {
     display: flex;
     justify-content: center;
+}
+
+.nav-bar a {
+    align-items: center;
+}
+
+.product-image-container {
+    width: 100%;
+    height: 180px;
+    /* Hauteur uniforme pour toutes les images */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: #f0f0f0;
+    /* Couleur de fond pour éviter les espaces vides */
+}
+
+.product-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    /* Garde l’image entière sans la déformer */
 }

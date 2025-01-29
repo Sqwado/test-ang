@@ -8,23 +8,26 @@ import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-product-card',
-  imports: [CommonModule],  
+  imports: [CommonModule],
   template: `
-  <div class="details-container" (click)="redirectToProduct(product.id)">
-    <div class="header">
-      <h2>{{product.name}}</h2>
-      <button (click)="toggleFavorite($event)" [class.filled]="product.isFavorite" class="favorite">
-                <span *ngIf="product.isFavorite">&#x2665;</span>
-                <span *ngIf="!product.isFavorite">&#x2661;</span>
-            </button>
-    </div>
-    <p class="description">{{product.description}}</p>
-    <p *ngIf="product.price" class="price">Price: {{product.price | currency:'EUR'}}</p>
-    <p *ngIf="product.releaseDate" class="release-date">Release date: {{product.releaseDate | date:'shortDate':'':'fr'}}</p>
-    <div class="button-container">
-      <button (click)="addToCart($event)" class="add-to-cart">Add to Cart</button>
-    </div>
+<div class="details-container" (click)="redirectToProduct(product.id)">
+  <div class="product-image-container">
+    <img [src]="product.imageUrl" [alt]="product.name" class="product-image">
   </div>
+  <div class="header">
+    <h2>{{product.name}}</h2>
+    <button (click)="toggleFavorite($event)" [class.filled]="product.isFavorite" class="favorite">
+      <span *ngIf="product.isFavorite">&#x2665;</span>
+      <span *ngIf="!product.isFavorite">&#x2661;</span>
+    </button>
+  </div>
+  <p class="description">{{product.description}}</p>
+  <p *ngIf="product.price" class="price">Price: {{product.price | currency:'EUR'}}</p>
+  <p *ngIf="product.releaseDate" class="release-date">Release date: {{product.releaseDate | date:'shortDate':'':'fr'}}</p>
+  <div class="button-container">
+    <button (click)="addToCart($event)" class="add-to-cart">Add to Cart</button>
+  </div>
+</div>
   `,
   styles: `
   :host {

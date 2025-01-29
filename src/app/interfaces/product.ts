@@ -5,6 +5,7 @@ export interface Product {
     price?: GLfloat;
     isFavorite?: boolean;
     releaseDate?: Date;
+    imageUrl?: string;
 }
 
 export class DefaultProduct implements Product {
