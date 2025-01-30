@@ -6,6 +6,8 @@ export interface Product {
     isFavorite?: boolean;
     releaseDate?: Date;
     imageUrl?: string;
+    class?: string;
+    evolution?: number;
 }
 
 export class DefaultProduct implements Product {
@@ -15,6 +17,7 @@ export class DefaultProduct implements Product {
     price: GLfloat = 0;
     isFavorite?: boolean = false;
     releaseDate?: Date = new Date();
+    imageUrl?: string = 'https://picsum.photos/1000/600';
 
     constructor(init?: Partial<DefaultProduct>) {
         Object.assign(this, init);

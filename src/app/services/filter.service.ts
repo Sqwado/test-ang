@@ -14,8 +14,17 @@ export class FilterService {
     { value: 'price-reverse', label: 'Price (Reverse)' }
   ] as const;
 
+  class = [
+    "60",
+    "70",
+    "70 ti",
+    "80",
+    "90",
+  ]
+
   filter: string = 'date-reverse'; // Valeur initiale du filtre
   searchQuery: string = ''; // Valeur initiale de la recherche
+  selectedClass: string[] = [];
 
   getFilter(): string {
     return this.filter;
@@ -23,6 +32,10 @@ export class FilterService {
 
   getSearchQuery(): string {
     return this.searchQuery;
+  }
+
+  getSelectedClass(): string[] {
+    return this.selectedClass;
   }
 
   handleFilterChange(newFilter: string) {
@@ -33,5 +46,19 @@ export class FilterService {
   handleSearchChange(newSearch: string) {
     this.searchQuery = newSearch;
     console.log('Search changed to:', this.searchQuery);
+  }
+
+  clearClassFilter(): void {
+    this.selectedClass = [];
+  }
+
+  handleClassChange(className: string): void {
+    if (this.selectedClass.includes(className)) {
+      this.selectedClass = this.selectedClass.filter(c => c !== className);
+      console.log('Class removed:', className);
+    } else {
+      this.selectedClass = [...this.selectedClass, className];
+      console.log('Class added:', className);
+    }
   }
 }

@@ -8,7 +8,7 @@ import { FilterService } from '../services/filter.service';
   imports: [CommonModule, FormsModule],
   template: `
     <div class="filter-dropdown">
-      <label for="filter">Filter by:</label>
+      <label for="filter">Sort by:</label>
       <select 
         id="filter" 
         [(ngModel)]="filterService.filter">

@@ -85,6 +85,15 @@ export const routesInfo: RouteInfo[] = [
         },
         exact: true,
         showInNav: false
+    },
+    {
+        route: {
+            path: '**',
+            redirectTo: '',
+            pathMatch: 'full'
+        },
+        exact: false,
+        showInNav: false
     }
 ];
 

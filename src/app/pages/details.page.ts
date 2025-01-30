@@ -6,56 +6,69 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { faArrowLeft, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 import { ProductService } from '../services/product.service';
-import { CartService } from '../services/cart.service'; ``
+import { CartService } from '../services/cart.service';
 import { ToastrService } from 'ngx-toastr';
 import { Product } from '../interfaces/product';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { RouterModule } from '@angular/router';
 
 @Component({
-    imports: [FontAwesomeModule, CommonModule, FormsModule],
+    imports: [FontAwesomeModule, CommonModule, FormsModule, RouterModule],
     standalone: true,
     template: `
     <div class="details-page">
-    <button class="back-button" (click)="goBack()" aria-label="Retour à la page précédente">
-        <fa-icon [icon]="['fas', 'arrow-left']"></fa-icon> Retour
-    </button>
-    <div class="details-container" *ngIf="product | async as productData">
-        <div class="product-image-container">
-            <img [src]="productData.imageUrl" [alt]="productData.name" class="product-image">
+        <button class="back-button" (click)="goBack()" aria-label="Retour à la page précédente">
+            <fa-icon [icon]="['fas', 'arrow-left']"></fa-icon> Retour
+        </button>
+        <div class="details-container" *ngIf="product | async as productData; else errorTemplate">
+            <div class="product-image-container">
+                <img [src]="productData.imageUrl" [alt]="productData.name" class="product-image">
+            </div>
+            <div class="header">
+                <h1>{{ productData.name }}</h1>
+                <button (click)="toggleFavorite($event)" [class.filled]="productData.isFavorite" class="favorite">
+                    <span *ngIf="productData.isFavorite">&#x2665;</span>
+                    <span *ngIf="!productData.isFavorite">&#x2661;</span>
+                </button>
+            </div>
+            <p class="description">{{ productData.description }}</p>
+            <p class="price">Price: {{ productData.price | currency:'EUR' }}</p>
+            <p class="release-date">Release Date: {{ productData.releaseDate | date:'fullDate':'':'fr' }}</p>
+            
+            <!-- Quantity adjustment -->
+            <div class="quantity-container">
+                <button (click)="decreaseQuantity()" class="quantity-button" aria-label="Diminuer la quantité">
+                    <fa-icon [icon]="['fas', 'minus']"></fa-icon>
+                </button>
+                <input [(ngModel)]="quantity" [min]="1" type="number" class="quantity-input" aria-label="Quantité" />
+                <button (click)="increaseQuantity()" class="quantity-button" aria-label="Augmenter la quantité">
+                    <fa-icon [icon]="['fas', 'plus']"></fa-icon>
+                </button>
+            </div>
+
+            <div class="button-container">
+                <button (click)="addToCart()" class="add-to-cart" aria-label="Ajouter au panier">Ajouter au panier</button>
+            </div>
+            <div class="evolution" *ngIf="evolution | async as productData">
+                <a [routerLink]="['/products', productData.id]" class="link">
+                    <h3>L'évolution logique</h3>
+                    <p>{{ productData.name }}</p>
+                    <div class="product-image-container">
+                        <img [src]="productData.imageUrl" [alt]="productData.name" class="product-image">
+                    </div>
+                </a>
+            </div>
         </div>
-        <div class="header">
-            <h1>{{ productData.name }}</h1>
-            <button (click)="toggleFavorite($event)" [class.filled]="productData.isFavorite" class="favorite">
-                <span *ngIf="productData.isFavorite">&#x2665;</span>
-                <span *ngIf="!productData.isFavorite">&#x2661;</span>
-            </button>
-        </div>
-        <p class="description">{{ productData.description }}</p>
-        <p class="price">Price: {{ productData.price | currency:'EUR' }}</p>
-        <p class="release-date">Release Date: {{ productData.releaseDate | date:'fullDate':'':'fr' }}</p>
         
-        <!-- Quantity adjustment -->
-        <div class="quantity-container">
-            <button (click)="decreaseQuantity()" class="quantity-button" aria-label="Diminuer la quantité">
-                <fa-icon [icon]="['fas', 'minus']"></fa-icon>
-            </button>
-            <input [(ngModel)]="quantity" [min]="1" type="number" class="quantity-input" aria-label="Quantité" />
-            <button (click)="increaseQuantity()" class="quantity-button" aria-label="Augmenter la quantité">
-                <fa-icon [icon]="['fas', 'plus']"></fa-icon>
-            </button>
-        </div>
-
-        <div class="button-container">
-            <button (click)="addToCart()" class="add-to-cart" aria-label="Ajouter au panier">Ajouter au panier</button>
-        </div>
+        <ng-template #errorTemplate>
+            <div class="not-found">
+                <p>Error loading product. Please try again later.</p>
+            </div>
+        </ng-template>
     </div>
-    <div *ngIf="!(product | async)" class="not-found">
-        <p>Product not found</p>
-    </div>
-</div>
-
-  `,
-    styles: [
+    `,
+     styles: [
         `
         :host {
             display: flex;
@@ -64,6 +77,16 @@ import { Observable } from 'rxjs';
             width: 100vw;
             box-sizing: border-box;
             background-color: #f2f4f8;
+        }
+
+        .link {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .evolution {
+            margin-top: 32px;
+            border-top: 2px solid #eee;
         }
 
         .details-page {
@@ -331,23 +354,48 @@ export class DetailsPage implements OnInit {
     productService = inject(ProductService);
     cartService = inject(CartService);
     route = inject(ActivatedRoute);
-    id: number | null = null;
     location = inject(Location);
     faIconLibrary = inject(FaIconLibrary);
     toastr = inject(ToastrService);
 
-    product: Observable<Product> | null = null;
+    product: Observable<Product | null> | null = null;
+    evolution: Observable<Product | null> | null = null;
     quantity: number = 1;
+    id: number | null = null;
 
     constructor() {
         this.faIconLibrary.addIcons(faArrowLeft, faPlus, faMinus);
     }
 
     ngOnInit() {
-        const idParam = this.route.snapshot.paramMap.get('id');
-        this.id = idParam !== null ? +idParam : null;
+        // Initial product loading based on URL param
+        this.loadProduct();
+
+        // Listen to parameter changes
+        this.route.paramMap.subscribe(params => {
+            const newId = params.get('id');
+            if (newId) {
+                this.id = +newId;
+                this.loadProduct();  // Reload product based on the new ID
+            }
+        });
+    }
+
+    private loadProduct() {
         if (this.id) {
-            this.product = this.productService.getProduct(+this.id);
+            this.product = this.productService.getProduct(this.id).pipe(
+                catchError(error => {
+                    console.error('Error fetching product:', error);
+                    return of(null);
+                })
+            );
+            this.product?.subscribe(product => {
+                if (product?.evolution) {
+                    this.evolution = this.productService.getProduct(+product.evolution);
+                } else {
+                    this.evolution = of(null);
+                }
+            });
         }
     }
 
@@ -358,7 +406,9 @@ export class DetailsPage implements OnInit {
     addToCart() {
         if (this.product) {
             this.product?.subscribe(product => {
-                this.cartService.addProduct(product, this.quantity);
+                if (product) {
+                    this.cartService.addProduct(product, this.quantity);
+                }
             });
         }
     }
@@ -367,12 +417,14 @@ export class DetailsPage implements OnInit {
         event.stopPropagation();
         let favToast = '';
         this.product?.subscribe(product => {
-            favToast = product.isFavorite ? 'Removed from favorites!' : 'Added to favorites!';
-            this.productService.toggleFavorite(product);
-            this.toastr.success(favToast, 'Success', {
-                toastClass: 'ngx-toastr favorite-toast',
-                positionClass: 'toast-bottom-right',
-            });
+            if (product) {
+                favToast = product.isFavorite ? 'Removed from favorites!' : 'Added to favorites!';
+                this.productService.toggleFavorite(product);
+                this.toastr.success(favToast, 'Success', {
+                    toastClass: 'ngx-toastr favorite-toast',
+                    positionClass: 'toast-bottom-right',
+                }); 
+            }
         });
     }
 
