@@ -23,20 +23,28 @@ export class CartService {
 
   private loadCartFromLocalStorage(): void {
     const storedCartItems = this.localStorageService.getCart();
-    this.cart.lines = storedCartItems.map(item => {
-      const product = this.productService.getProduct(parseInt(item.id, 10));
-      return {
-        product: product as Product,
-        quantity: item.quantity,
-        lineTotal: 0 // This will be recalculated
-      };
+    this.cart.lines = [];
+    storedCartItems.forEach(item => {
+      this.productService.getProduct(parseInt(item.id, 10)).subscribe(product => {
+        if (product) {
+          this.cart.lines.push({ product, quantity: item.quantity, lineTotal: 0 });
+          this.cart.lines.forEach(line => {
+            line.lineTotal = this.getLineTotal(line);
+          });
+          this.cart.cartPrice = this.getTotalPrice();
+          this.cart.itemCount = this.getCartItemsCount();
+        }
+      });
     });
+
     this.cart.lines.forEach(line => {
       line.lineTotal = this.getLineTotal(line);
     });
+
     this.cart.cartPrice = this.getTotalPrice();
     this.cart.itemCount = this.getCartItemsCount();
   }
+
 
   addProduct(product: Product, quantity = 1): void {
     const line = this.cart.lines.find(l => l.product.id === product.id);
@@ -44,8 +52,7 @@ export class CartService {
       line.quantity += quantity;
       line.lineTotal += (product.price ?? 0) * quantity;
     } else {
-      this.cart.lines.push({ product, quantity: quantity, lineTotal: (product.price ?? 0) * quantity });
-    }
+      this.cart.lines.unshift({ product, quantity: quantity, lineTotal: (product.price ?? 0) * quantity });}
 
     this.localStorageService.addToCart(product.id.toString(), quantity);
 

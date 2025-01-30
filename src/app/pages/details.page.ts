@@ -8,6 +8,8 @@ import { faArrowLeft, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons'
 import { ProductService } from '../services/product.service';
 import { CartService } from '../services/cart.service'; ``
 import { ToastrService } from 'ngx-toastr';
+import { Product } from '../interfaces/product';
+import { Observable } from 'rxjs';
 
 @Component({
     imports: [FontAwesomeModule, CommonModule, FormsModule],
@@ -17,20 +19,20 @@ import { ToastrService } from 'ngx-toastr';
     <button class="back-button" (click)="goBack()" aria-label="Retour à la page précédente">
         <fa-icon [icon]="['fas', 'arrow-left']"></fa-icon> Retour
     </button>
-    <div class="details-container" *ngIf="product">
+    <div class="details-container" *ngIf="product | async as productData">
         <div class="product-image-container">
-            <img [src]="product.imageUrl" [alt]="product.name" class="product-image">
+            <img [src]="productData.imageUrl" [alt]="productData.name" class="product-image">
         </div>
         <div class="header">
-            <h1>{{ product.name }}</h1>
-            <button (click)="toggleFavorite($event)" [class.filled]="product.isFavorite" class="favorite">
-                <span *ngIf="product.isFavorite">&#x2665;</span>
-                <span *ngIf="!product.isFavorite">&#x2661;</span>
+            <h1>{{ productData.name }}</h1>
+            <button (click)="toggleFavorite($event)" [class.filled]="productData.isFavorite" class="favorite">
+                <span *ngIf="productData.isFavorite">&#x2665;</span>
+                <span *ngIf="!productData.isFavorite">&#x2661;</span>
             </button>
         </div>
-        <p class="description">{{ product.description }}</p>
-        <p class="price">Price: {{ product.price | currency:'EUR' }}</p>
-        <p class="release-date">Release Date: {{ product.releaseDate | date:'fullDate':'':'fr' }}</p>
+        <p class="description">{{ productData.description }}</p>
+        <p class="price">Price: {{ productData.price | currency:'EUR' }}</p>
+        <p class="release-date">Release Date: {{ productData.releaseDate | date:'fullDate':'':'fr' }}</p>
         
         <!-- Quantity adjustment -->
         <div class="quantity-container">
@@ -47,7 +49,7 @@ import { ToastrService } from 'ngx-toastr';
             <button (click)="addToCart()" class="add-to-cart" aria-label="Ajouter au panier">Ajouter au panier</button>
         </div>
     </div>
-    <div *ngIf="!product" class="not-found">
+    <div *ngIf="!(product | async)" class="not-found">
         <p>Product not found</p>
     </div>
 </div>
@@ -334,7 +336,7 @@ export class DetailsPage implements OnInit {
     faIconLibrary = inject(FaIconLibrary);
     toastr = inject(ToastrService);
 
-    product: any;
+    product: Observable<Product> | null = null;
     quantity: number = 1;
 
     constructor() {
@@ -355,17 +357,22 @@ export class DetailsPage implements OnInit {
 
     addToCart() {
         if (this.product) {
-            this.cartService.addProduct(this.product, this.quantity);
+            this.product?.subscribe(product => {
+                this.cartService.addProduct(product, this.quantity);
+            });
         }
     }
 
     toggleFavorite(event: Event) {
         event.stopPropagation();
-        const favToast = this.product.isFavorite ? 'Removed from favorites!' : 'Added to favorites!';
-        this.productService.toggleFavorite(this.product);
-        this.toastr.success(favToast, 'Success', {
-            toastClass: 'ngx-toastr favorite-toast',
-            positionClass: 'toast-bottom-right',
+        let favToast = '';
+        this.product?.subscribe(product => {
+            favToast = product.isFavorite ? 'Removed from favorites!' : 'Added to favorites!';
+            this.productService.toggleFavorite(product);
+            this.toastr.success(favToast, 'Success', {
+                toastClass: 'ngx-toastr favorite-toast',
+                positionClass: 'toast-bottom-right',
+            });
         });
     }
 

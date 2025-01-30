@@ -32,7 +32,7 @@ export class OrderService {
   }
 
   addOrder(order: Order): void {
-    this.orders.push(order);
+    this.orders.unshift(order);
     this.localStorageService.addOrder(order);
   }
 

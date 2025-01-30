@@ -14,16 +14,16 @@ export class LocalStorageService {
     private readonly favoritesKey = 'favoriteItems';
     private readonly ordersKey = 'orders';
 
-    setItem(key: string, value: any): void {
+    private setItem(key: string, value: any): void {
         localStorage.setItem(key, JSON.stringify(value));
     }
 
-    getItem(key: string): any {
+    private getItem<T>(key: string): T | null {
         const item = localStorage.getItem(key);
         return item ? JSON.parse(item) : null;
     }
 
-    removeItem(key: string): void {
+    private removeItem(key: string): void {
         localStorage.removeItem(key);
     }
 
@@ -34,26 +34,25 @@ export class LocalStorageService {
         if (existingItem) {
             existingItem.quantity += quantity;
         } else {
-            cart.push({ id: itemId, quantity });
+            cart.unshift({ id: itemId, quantity });
         }
         this.setItem(this.cartKey, cart);
     }
 
     removeFromCart(itemId: string, quantity: number = 1): void {
-        let cart = this.getCart();
+        const cart = this.getCart();
         const existingItem = cart.find(cartItem => cartItem.id === itemId);
         if (existingItem) {
             if (existingItem.quantity > quantity) {
                 existingItem.quantity -= quantity;
             } else {
-                cart = cart.filter(cartItem => cartItem.id !== itemId);
+                this.setItem(this.cartKey, cart.filter(cartItem => cartItem.id !== itemId));
             }
-            this.setItem(this.cartKey, cart);
         }
     }
 
     getCart(): CartItem[] {
-        return this.getItem(this.cartKey) || [];
+        return this.getItem<CartItem[]>(this.cartKey) || [];
     }
 
     clearCart(): void {
@@ -70,13 +69,11 @@ export class LocalStorageService {
     }
 
     removeFavorite(itemId: string): void {
-        let favorites = this.getFavorites();
-        favorites = favorites.filter(favId => favId !== itemId);
-        this.setItem(this.favoritesKey, favorites);
+        this.setItem(this.favoritesKey, this.getFavorites().filter(favId => favId !== itemId));
     }
 
     getFavorites(): string[] {
-        return this.getItem(this.favoritesKey) || [];
+        return this.getItem<string[]>(this.favoritesKey) || [];
     }
 
     clearFavorites(): void {
@@ -86,12 +83,12 @@ export class LocalStorageService {
     // Order methods
     addOrder(order: any): void {
         const orders = this.getOrders();
-        orders.push(order);
+        orders.unshift(order);
         this.setItem(this.ordersKey, orders);
     }
 
     getOrders(): any[] {
-        return this.getItem(this.ordersKey) || [];
+        return this.getItem<any[]>(this.ordersKey) || [];
     }
 
     clearOrders(): void {

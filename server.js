@@ -28,3 +28,14 @@ app.get('/products', (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
     res.json(products);
 });
+
+app.get('/products/:id', (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
+    const id = parseInt(req.params.id);
+    const product = products.find(p => p.id === id);
+    if (product) {
+        res.json(product);
+    } else {
+        res.status(404).send('Product not found');
+    }
+});
